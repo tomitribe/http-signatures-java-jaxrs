@@ -23,8 +23,13 @@ public abstract class LightPool<T> {
         try {
             consumer.accept(instance);
         } finally {
+            release(instance);
             pool.add(instance); // auto adjusting (relative to the threading)
         }
+    }
+
+    protected void release(final T instance) {
+        // no-op
     }
 
     protected abstract T create();

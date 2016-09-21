@@ -47,6 +47,11 @@ public class DigestFilter implements ClientRequestFilter {
                 throw new IllegalArgumentException(e);
             }
         }
+
+        @Override
+        protected void release(final MessageDigest instance) {
+            instance.reset();
+        }
     };
 
     public DigestFilter(final String header, final String digest) {
