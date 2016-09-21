@@ -1,0 +1,50 @@
+= HTTP Signature JAXRS 2 integration
+
+A light JAXRS 2 integration with https://github.com/tomitribe/http-signatures-java
+
+== Usage
+
+The library provides four features to ease the usage but it is mainly three `javax.ws.rs.client.ClientRequestFilter`:
+
+- DateFilter: adds a Date header to the request
+- DigestFilter: adds the digest header from the sent payload
+- SignatureFilter: adds the authorization header computed using signature algorithm from the current request
+
+NOTE: date and digest filters are there to be able to enforce these headers when used with signature filter, therefore
+it is recommanded to use these filters if you add one of these headers instead of relying on the JAX-RS client for instance for the date header.
+
+Then each filter has its feature activating it automatically:
+
+- DateFeature
+- DigestFeature
+- SignatureFeature
+
+These features are almost 1-1 with the filter excepted they provide a builder API.
+
+Finally a AllInOneFeature is provided to support to activate all these features at the same time, it just exposes
+a builder API on top of the three previously mentionned features.
+
+== Sample
+
+[source,java]
+----
+final Client client = newClient();
+try {
+    final String response = client.register(
+
+            AllInOneFeature.builder()
+                .digestAlgorithm(DIGEST_ALGORITHM)
+                .key(KeystoreInitializer.SECRET)
+                .algorithm(KeystoreInitializer.ALGO)
+                .alias(KeystoreInitializer.KEY_ALIAS)
+                .headers(SIGNATURE_HEADERS)
+                .build())
+
+            .target("http://....")
+            .path("api/....")
+            .request(MediaType.WILDCARD_TYPE)
+            .get(String.class);
+} finally {
+    client.close();
+}
+----

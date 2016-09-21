@@ -1,0 +1,53 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!--
+  ~ Tomitribe Confidential
+  ~
+  ~ Copyright(c) Tomitribe Corporation. 2016
+  ~
+  ~ The source code for this program is not published or otherwise divested
+  ~ of its trade secrets, irrespective of what has been deposited with the
+  ~ U.S. Copyright Office.
+  -->
+<Server port="58719" shutdown="SHUTDOWN">
+  <Listener className="org.apache.tomee.catalina.ServerListener"/>
+  <Listener className="org.apache.catalina.mbeans.GlobalResourcesLifecycleListener"/>
+
+  <GlobalNamingResources>
+    <Resource name="UserDatabase" auth="Container"
+              type="org.apache.catalina.UserDatabase"
+              description="User database that can be updated and saved"
+              factory="org.apache.catalina.users.MemoryUserDatabaseFactory"
+              pathname="conf/tomcat-users.xml"/>
+  </GlobalNamingResources>
+
+  <Service name="Catalina">
+    <Connector port="58720" protocol="HTTP/1.1"
+               connectionTimeout="20000"
+               redirectPort="58718"/>
+
+
+    <Engine name="Catalina" defaultHost="localhost">
+      <Realm className="org.apache.catalina.realm.LockOutRealm">
+        <Realm className="com.tomitribe.tribestream.security.signatures.SignatureJAASRealm"
+               appName="tribe-realm"
+               keystoreFile="${catalina.base}/conf/test.jks"
+               keystorePass="cipher:Static3DES:pVY3mYpz9x4jWCuFImuADWc+fRHFRIOm"
+               userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+               roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal"/>
+
+        <Realm className="org.apache.catalina.realm.JAASRealm"
+               appName="tribe-realm"
+               userClassNames="org.apache.openejb.core.security.jaas.UserPrincipal"
+               roleClassNames="org.apache.openejb.core.security.jaas.GroupPrincipal"/>
+      </Realm>
+
+      <Host name="localhost" appBase="webapps"
+            unpackWARs="true" autoDeploy="true">
+        <Valve className="org.apache.catalina.valves.AccessLogValve" directory="logs"
+               prefix="localhost_access_log." suffix=".txt"
+               pattern="%h %l %u %t &quot;%r&quot; %s %b"/>
+
+      </Host>
+    </Engine>
+  </Service>
+</Server>
