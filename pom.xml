@@ -98,6 +98,7 @@
       <groupId>com.tomitribe.tribestream</groupId>
       <artifactId>tribestream-container</artifactId>
       <version>${tribestream.version}</version>
+      <scope>test</scope>
       <exclusions>
         <exclusion>
           <groupId>*</groupId>
